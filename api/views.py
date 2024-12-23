@@ -34,6 +34,7 @@ class VehicleView(View):
             return handle_invalid_json()
 
     def put(self, request, vin):
+        ignore_field = ['status', 'vin']
         if request.content_type == 'application/json':
             try:
                 data = json.loads(request.body) 
@@ -41,7 +42,7 @@ class VehicleView(View):
                 return handle_invalid_json()
             vehicle = get_object_or_404(Vehicle, vin=vin)
             for field, val in data.items():
-                if val is not None and field != 'status':
+                if val is not None and field.lower() not in ignore_field:
                     setattr(vehicle, field, val)
 
             try:
